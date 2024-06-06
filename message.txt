@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # PC Physique ip: 192.168.129.0
-# INTERNET (par pont): enp0s9 (DHCP)
-# WINDOWS: enp0s3 (192.168.1.1) Client (192.168.1.2)
-# LINUX: enp0s8 (172.16.1.1) Client (172.16.1.2)
+# VERS INTERNET (par pont): enp0s9 (DHCP)
+# VERS CLIENT WINDOWS: enp0s3 (192.168.1.1) Client (192.168.1.2)
+# VERS SERVEUR WEB-SSH: enp0s8 (172.16.1.1) Client (172.16.1.2)
 
 
 #FLUSH#
