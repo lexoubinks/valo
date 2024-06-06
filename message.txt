@@ -65,4 +65,4 @@ iptables -A FORWARD -j REJECT
 ################NAT################
 iptables -t nat -A PREROUTING -p tcp --dport 61337 -s [ip_du_pc_de_lhenallux] -j DNAT --to 172.16.1.2:22
 
-iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o enp0s9 -j MASQUERADE
