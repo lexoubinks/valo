@@ -2,8 +2,8 @@
 
 # PC Physique ip: 192.168.129.0
 # ROUTER: enp0s9 (DHCP)
-# WINDOWS: enp0s8 (192.168.1.1) Client (192.168.1.2)
-# LINUX: enp0s3 (172.16.1.1) Client (172.16.1.2)
+# WINDOWS: enp0s3 (192.168.1.1) Client (192.168.1.2)
+# LINUX: enp0s8 (172.16.1.1) Client (172.16.1.2)
 
 
 #FLUSH#
@@ -42,15 +42,15 @@ iptables -A OUTPUT -j REJECT
 
 iptables -A FORWARD -p ICMP -j ACCEPT
 
-iptables -A FORWARD -p tcp --dport 80 -s 192.168.1.0/24 -i enp0s8 -o enp0s3 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 80 -s 192.168.1.0/24 -i enp0s3 -o enp0s8 -j ACCEPT
 
-iptables -A FORWARD -p tcp --dport 443 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
-iptables -A FORWARD -p udp --dport 53 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
-iptables -A FORWARD -p tcp --dport 53 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
-iptables -A FORWARD -p tcp --dport 80 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 443 -s 192.168.1.0/24 -i enp0s3 -o enp0s9 -j ACCEPT
+iptables -A FORWARD -p udp --dport 53 -s 192.168.1.0/24 -i enp0s3 -o enp0s9 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 53 -s 192.168.1.0/24 -i enp0s3 -o enp0s9 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 80 -s 192.168.1.0/24 -i enp0s3 -o enp0s9 -j ACCEPT
 
-iptables -A FORWARD -i enp0s8 -o enp0s9 -p tcp --dport 80 -d 172.16.1.0/16 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -i enp0s9 -o enp0s8 -p tcp --sport 80 -s 172.16.1.0/16 -m state --state ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i enp0s3 -o enp0s9 -p tcp --dport 80 -d 172.16.1.0/16 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i enp0s9 -o enp0s3 -p tcp --sport 80 -s 172.16.1.0/16 -m state --state ESTABLISHED -j ACCEPT
 
 iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
@@ -63,6 +63,6 @@ iptables -A FORWARD -j REJECT
 
 
 ################NAT################
-iptables -t nat -A PREROUTING -p tcp --dport 61337 -s 192.168.0.226 -j DNAT --to 172.16.1.2:22
+iptables -t nat -A PREROUTING -p tcp --dport 61337 -s [ip_du_pc_de_lhenallux] -j DNAT --to 172.16.1.2:22
 
-iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE```
+iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
