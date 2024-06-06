@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# PC Physique ip: 192.168.129.0
+# ROUTER: enp0s9 (DHCP)
+# WINDOWS: enp0s8 (192.168.1.1) Client (192.168.1.2)
+# LINUX: enp0s3 (172.16.1.1) Client (172.16.1.2)
+
+
+#FLUSH#
+iptables -F INPUT
+iptables -F OUTPUT
+iptables -F FORWARD
+iptables -t nat -F PREROUTING
+iptables -t nat -F POSTROUTING
+################INPUT###############
+
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -p ICMP -s 172.16.1.2 -j ACCEPT
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+
+
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+#----
+iptables -A INPUT -j REJECT
+
+################OUTPUT###############
+
+iptables -A OUTPUT -o lo -j ACCEPT
+iptables -A OUTPUT -p ICMP -d 172.16.1.2 -j ACCEPT
+iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
+
+#------
+iptables -A OUTPUT -j REJECT
+
+################FORWARD################
+
+iptables -A FORWARD -p ICMP -j ACCEPT
+
+iptables -A FORWARD -p tcp --dport 80 -s 192.168.1.0/24 -i enp0s8 -o enp0s3 -j ACCEPT
+
+iptables -A FORWARD -p tcp --dport 443 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
+iptables -A FORWARD -p udp --dport 53 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 53 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 80 -s 192.168.1.0/24 -i enp0s8 -o enp0s9 -j ACCEPT
+
+iptables -A FORWARD -i enp0s8 -o enp0s9 -p tcp --dport 80 -d 172.16.1.0/16 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i enp0s9 -o enp0s8 -p tcp --sport 80 -s 172.16.1.0/16 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+
+iptables -A FORWARD -p tcp --dport 22 -d 172.16.1.2 -j ACCEPT
+
+
+#--------
+iptables -A FORWARD -j REJECT
+
+
+################NAT################
+iptables -t nat -A PREROUTING -p tcp --dport 61337 -s 192.168.0.226 -j DNAT --to 172.16.1.2:22
+
+iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE```
