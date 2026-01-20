@@ -1,0 +1,8 @@
+docker network create net_exam
+mkdir exam && cd exam
+echo "Site web" > index.html
+nano Dockerfile
+docker run -d --name db --net net_exam -v vol_sql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root mariadb
+docker build -t web_img .
+docker run -d --name web --net net_exam -p 5555:8080 web_img
+  
