@@ -1,0 +1,12 @@
+docker --version 
+cat /etc/debian_version
+ansible-inventory -i hosts.ini –graph 
+ssh-keygen 
+ansible-playbook -i hosts.ini boostrap.yml -K 
+ansible fedora -i hosts.ini -u toto -m shell -a "systemctl is-active docker" 
+ansible arch -i hosts.ini -u toto -m shell -a "systemctl is-active nginx" 
+ansible logservers -i hosts.ini -u toto -m shell -a "dpkg -l | grep net-tools" 
+curl http://localhost:5555/
+docker exec web mysql -h db -u root -proot -e "SHOW DATABASES;" 
+docker exec web whoami 
+docker inspect -f '{{ .Mounts }}' db
