@@ -1,0 +1,58 @@
+---
+- name: Installation & config
+  hosts: servers
+  remote_user: toto
+  become: yes
+  tasks:
+    - name: Update debian
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Update Fedora
+      dnf:
+        update_cache: yes
+      when: ansible_distribution == "Fedora"
+
+    - name: Update Arch Linux
+      pacman:
+        update_cache: yes
+      when: ansible_distribution == "Archlinux"
+
+    - name: Install packages Fedora
+      dnf:
+        name:
+          - docker
+          - docker-compose
+          - podman
+        state: present
+      when: ansible_distribution == "Fedora"
+
+    - name: Démarrer Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Fedora"
+
+    - name: Install packages Arch
+      pacman:
+        name:
+          - nginx
+          - net-tools
+        state: present
+      when: ansible_distribution == "Archlinux"
+
+    - name: Démarrer Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Archlinux"
+
+    - name: Install packages debian
+      apt:
+        name: net-tools
+        state: present
+      when: ansible_os_family == "Debian"
+      ...
