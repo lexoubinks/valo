@@ -1,0 +1,26 @@
+---
+- name: Playbook de bootstraping
+  hosts: servers
+  become: yes
+  tasks:
+    - name: crée user toto
+      user:
+        name: toto
+        create_home: yes
+        shell: /bin/bash
+        state: present
+
+    - name: Copier clé SSH
+      authorized_key:
+        user: toto
+        state: present
+        # Note: La ligne ci-dessous a été reconstruite car l'image était floue, mais c'est la syntaxe standard
+        key: "{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}"
+
+    - name: Configurer sudo NOPASSWD
+      lineinfile:
+        path: /etc/sudoers.d/toto
+        line: 'toto ALL=(ALL) NOPASSWD: ALL'
+        create: yes
+        mode: 0440
+        ...
